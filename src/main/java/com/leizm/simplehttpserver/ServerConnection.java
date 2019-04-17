@@ -5,8 +5,8 @@ import java.net.Socket;
 
 public class ServerConnection implements Runnable {
     protected Socket socket;
-    protected BufferedReader in;
-    protected BufferedWriter out;
+    protected DataInputStream in;
+    protected DataOutputStream out;
     protected Handler handler;
 
     public ServerConnection(Socket socket, Handler handler) {
@@ -16,17 +16,17 @@ public class ServerConnection implements Runnable {
 
     public void run() {
         try {
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            in = new DataInputStream(socket.getInputStream());
+            out = new DataOutputStream(socket.getOutputStream());
             while (true) {
-                ServerRequest req = new ServerRequest(socket.getInputStream());
+                ServerRequest req = new ServerRequest(in);
                 req.parse();
                 boolean keepAlive = false;
                 if (req.getVersion() == "HTTP/1.1" && req.hasHeader("content-length")) {
                     keepAlive = true;
                 }
 
-                ServerResponse res = new ServerResponse(socket.getOutputStream());
+                ServerResponse res = new ServerResponse(out);
                 res.setHeader("X-Powered-By", "com.leizm.simplehttpserver");
                 if (keepAlive) {
                     res.setHeader("Connection", "keep-alive");
@@ -43,7 +43,7 @@ public class ServerConnection implements Runnable {
                 }
 
                 if (!keepAlive) {
-                    socket.close();
+                    destroy();
                     break;
                 }
             }

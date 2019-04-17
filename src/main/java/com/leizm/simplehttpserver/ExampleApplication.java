@@ -10,9 +10,14 @@ public class ExampleApplication {
             @Override
             public void onRequest(ServerRequest req, ServerResponse res) {
                 try {
-                    System.out.println(String.format("%s %s", req.getMethod(), req.getPath()));
-                    System.out.println(String.format("\t%s", String.valueOf(req.getBody())));
+                    System.out.println(String.format("Request: %s %s", req.getMethod(), req.getPath()));
+                    for (String name: req.getHeaders().keySet()) {
+                        System.out.println(String.format("\t%s: %s", name, req.getHeader(name)));
+                    }
+                    byte[] body = req.getBody();
+                    System.out.println(String.format("\tBody: %s", new String(body)));
                     res.end("Hello, world");
+                    System.out.println("Response");
                 } catch (Exception e) {
                     System.out.println(e);
                 }

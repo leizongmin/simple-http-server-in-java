@@ -7,9 +7,9 @@ import java.util.HashMap;
 public class ServerResponse {
     protected OutputStream output;
 
-    private HashMap<String, String> headers;
+    private HashMap<String, String> headers = new HashMap<String, String>();
 
-    private int statusCode;
+    private int statusCode = 200;
     private String message = "OK";
 
     public ServerResponse(OutputStream output) {
@@ -29,7 +29,7 @@ public class ServerResponse {
     }
 
     protected void writeHead() throws IOException {
-        output.write(String.format("%d %s\r\n", statusCode, message).getBytes());
+        output.write(String.format("HTTP/1.1 %d %s\r\n", statusCode, message).getBytes());
         for (String key : headers.keySet()) {
             output.write(String.format("%s: %s\r\n", key, headers.get(key)).getBytes());
         }
