@@ -8,6 +8,7 @@ public class Server {
     protected ServerSocket server;
     protected ServerOptions options;
     protected ThreadFactory threadPool;
+    protected Handler handler;
 
     public Server(ServerOptions options) throws IOException {
         this.options = options;
@@ -22,6 +23,10 @@ public class Server {
         }
     }
 
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
     protected void acceptNewConnection(Socket socket) {
         if (threadPool == null) {
             threadPool = new ThreadFactory() {
@@ -32,7 +37,7 @@ public class Server {
             };
         }
 
-        ServerConnection conn = new ServerConnection(socket);
+        ServerConnection conn = new ServerConnection(socket, handler);
         Thread t = threadPool.newThread(conn);
         t.start();
     }
