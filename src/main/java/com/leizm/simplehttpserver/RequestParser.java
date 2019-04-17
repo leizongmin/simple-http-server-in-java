@@ -1,8 +1,9 @@
 package com.leizm.simplehttpserver;
 
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class RequestParser {
@@ -10,7 +11,7 @@ public class RequestParser {
     private String method;
     private String path;
     private String version;
-    private Map<String, String> headers;
+    private HashMap<String, String> headers = new HashMap<String, String>();
 
     public String getMethod() {
         return method;
@@ -24,7 +25,7 @@ public class RequestParser {
         return version;
     }
 
-    public Map<String, String> getHeaders() {
+    public HashMap<String, String> getHeaders() {
         return headers;
     }
 
@@ -33,28 +34,33 @@ public class RequestParser {
     }
 
     public void parse() throws IOException {
-        Scanner s = new Scanner(input);
-        String[] headerLines = s.findWithinHorizon("\r\n\r\n", 0).split("\r\n");
-        if (headerLines.length < 1) {
+        long offset = 0;
+        Scanner s = new Scanner(input).useDelimiter("\r\n");
+        String firstLine = s.nextLine();
+        String[] firstLineBlocks = firstLine.split(" ");
+        if (firstLineBlocks.length < 3) {
             throw HttpError.badRequest();
         }
+        offset += firstLine.length() + 2;
+        method = firstLineBlocks[0].toUpperCase();
+        path = firstLineBlocks[1];
+        version = firstLineBlocks[2];
 
-        String[] firstLine = headerLines[0].split(" ");
-        if (firstLine.length < 3) {
-            throw HttpError.badRequest();
-        }
-        method = firstLine[0].toUpperCase();
-        path = firstLine[1];
-        version = firstLine[2];
-
-        for (int i = 1; i < headerLines.length; i++) {
-            int pos = headerLines[i].indexOf(':');
+        while (s.hasNext()) {
+            String line = s.nextLine();
+            offset += line.length() + 2;
+            if (line.length() == 0) {
+                break;
+            }
+            int pos = line.indexOf(':');
             if (pos == -1) {
                 throw HttpError.badRequest();
             }
-            String name = headerLines[i].substring(0, pos);
-            String value = headerLines[i].substring(pos + 1);
+            String name = line.substring(0, pos).trim();
+            String value = line.substring(pos + 1).trim();
             headers.put(name, value);
         }
+        input.reset();
+        input.skip(offset);
     }
 }
