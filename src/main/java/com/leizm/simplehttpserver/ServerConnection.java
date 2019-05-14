@@ -22,7 +22,7 @@ public class ServerConnection implements Runnable {
                 ServerRequest req = new ServerRequest(in);
                 req.parse();
                 boolean keepAlive = false;
-                if (req.getVersion() == "HTTP/1.1" && req.hasHeader("content-length")) {
+                if ("HTTP/1.1".equals(req.getVersion()) && req.hasHeader("content-length")) {
                     keepAlive = true;
                 }
 
