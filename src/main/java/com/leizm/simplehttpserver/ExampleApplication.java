@@ -10,6 +10,7 @@ public class ExampleApplication {
             @Override
             public void onRequest(ServerRequest req, ServerResponse res) {
                 try {
+                    System.out.println(String.format("From %s", req.getConnection().getSocket().getRemoteSocketAddress()));
                     System.out.println(String.format("Request: %s %s", req.getMethod(), req.getPath()));
                     for (String name: req.getHeaders().keySet()) {
                         System.out.println(String.format("\t%s: %s", name, req.getHeader(name)));
@@ -17,13 +18,14 @@ public class ExampleApplication {
                     byte[] body = req.getBody();
                     System.out.println(String.format("\tBody: %s", new String(body)));
                     res.end("Hello, world");
-                    System.out.println("Response");
+                    System.out.println("Finish");
                 } catch (Exception e) {
                     System.out.println(e);
                 }
             }
         };
         server.setHandler(handler);
+        System.out.println(String.format("Server listening on %s:%s", options.getAddress(), options.getPort()));
         server.listen();
     }
 }

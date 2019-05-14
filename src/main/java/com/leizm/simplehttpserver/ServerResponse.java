@@ -8,14 +8,16 @@ import java.util.HashMap;
 
 @Data
 public class ServerResponse {
-    protected OutputStream output;
+    private ServerConnection connection;
+    private OutputStream output;
 
     private HashMap<String, String> headers = new HashMap<String, String>();
 
     private int statusCode = 200;
     private String message = "OK";
 
-    public ServerResponse(OutputStream output) {
+    public ServerResponse(ServerConnection connection, OutputStream output) {
+        this.connection = connection;
         this.output = output;
     }
 

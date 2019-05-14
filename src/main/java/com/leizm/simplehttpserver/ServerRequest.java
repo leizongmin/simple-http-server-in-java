@@ -9,13 +9,15 @@ import java.util.HashMap;
 
 @Getter
 public class ServerRequest {
-    protected DataInputStream in;
+    private ServerConnection connection;
+    private DataInputStream in;
     private String method;
     private String path;
     private String version;
     private HashMap<String, String> headers = new HashMap<String, String>();
 
-    public ServerRequest(DataInputStream in) {
+    public ServerRequest(ServerConnection connection, DataInputStream in) {
+        this.connection = connection;
         this.in = in;
     }
 
