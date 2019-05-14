@@ -1,35 +1,19 @@
 package com.leizm.simplehttpserver;
 
+import lombok.Getter;
 import sun.misc.IOUtils;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Scanner;
 
-
+@Getter
 public class ServerRequest {
     protected DataInputStream in;
     private String method;
     private String path;
     private String version;
     private HashMap<String, String> headers = new HashMap<String, String>();
-
-    public String getMethod() {
-        return method;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public HashMap<String, String> getHeaders() {
-        return headers;
-    }
 
     public ServerRequest(DataInputStream in) {
         this.in = in;

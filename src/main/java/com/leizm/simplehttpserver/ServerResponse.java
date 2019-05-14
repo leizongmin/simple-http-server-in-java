@@ -1,9 +1,12 @@
 package com.leizm.simplehttpserver;
 
+import lombok.Data;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 
+@Data
 public class ServerResponse {
     protected OutputStream output;
 
@@ -18,14 +21,6 @@ public class ServerResponse {
 
     public void setHeader(String name, String value) {
         headers.put(name, value);
-    }
-
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     protected void writeHead() throws IOException {
